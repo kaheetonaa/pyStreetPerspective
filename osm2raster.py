@@ -12,8 +12,9 @@ if sys.argv[1]=='--help':
 else:
     #------------------------------------
     api = overpass.API()
+    radius=float(sys.argv[1])
     #------------------------------------
-    response = api.get('nwr["building"](around:'+str(sys.argv[1])+','+str(sys.argv[2])+','+str(sys.argv[3])+');out geom;', responseformat="xml")
+    response = api.get('nwr["building"](around:'+str(radius*2)+','+str(sys.argv[2])+','+str(sys.argv[3])+');out geom;', responseformat="xml")
     with open("input.osm", "w") as text_file:
         text_file.write(str(response))
     print('downloaded and written to input.osm')
@@ -25,7 +26,7 @@ else:
     #------------------------------------
     gdf=gpd.GeoDataFrame.from_features(geojson,crs='EPSG:4326').to_crs('EPSG:3857')
     df=pd.DataFrame({'building':[0],'lat':[sys.argv[2]],'lng':[sys.argv[3]]})
-    extent=gpd.GeoDataFrame(geometry=gpd.GeoSeries(gpd.points_from_xy(df.lng,df.lat),crs='EPSG:4326').to_crs('EPSG:3857').buffer(float(sys.argv[1])))
+    extent=gpd.GeoDataFrame(geometry=gpd.GeoSeries(gpd.points_from_xy(df.lng,df.lat),crs='EPSG:4326').to_crs('EPSG:3857').buffer(radius))
     gdf['building']=1
     extent['building']=0
     gdf=gpd.clip(gdf,extent)
@@ -42,4 +43,5 @@ else:
         )
     cube.building.rio.to_raster('geom.tif')
 grid=cube.building.to_numpy()
+grid=np.flip(np.flip(grid,0),1) #correct direction
 np.save('map_grid.npy',grid)
