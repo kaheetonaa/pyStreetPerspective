@@ -4,3 +4,7 @@ osm2geojson
 overpass
 geocube
 pygame
+sympy
+urllib
+json
+math
