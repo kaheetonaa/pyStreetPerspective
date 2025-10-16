@@ -12,7 +12,7 @@ if sys.argv[1]=='--help':
 else:
     #------------------------------------
     api = overpass.API()
-    radius=float(sys.argv[1])
+    radius=int(sys.argv[1])
     #------------------------------------
     response = api.get('nwr["building"](around:'+str(radius*2)+','+str(sys.argv[2])+','+str(sys.argv[3])+');out geom;', responseformat="xml")
     with open("input.osm", "w") as text_file:
@@ -42,6 +42,6 @@ else:
         fill=0
         )
     cube.building.rio.to_raster('geom.tif')
-grid=cube.building.to_numpy()
-grid=np.flip(np.flip(grid,0),1) #correct direction
-np.save('map_grid.npy',grid)
+    grid=cube.building.to_numpy()
+    grid=np.flip(np.flip(grid,0),1) #correct direction
+    np.save('map_grid.npy',grid)
