@@ -1,10 +1,13 @@
 import pygame
-from math import sin, cos, sqrt
+from math import sin, cos, sqrt, pi
 import numpy as np
-
+import sys
 # python -m cProfile -s tottime thisfile.py > benchmark.txt # to evaluate code performance
 
 map = np.load('map_grid.npy') # map string to 2D array of chars
+dist=100
+angle=114.69439480036/180*pi  #compass_angle in radian
+aov=1.361520062270225
 
 print(map)
 
@@ -17,6 +20,13 @@ width = len(map[0])
 tile_size = 1  
 
 player_pos = [int(height/2), int(width/2)]
+
+def angle_pos():
+    obj_pos=np.dot(np.array([[cos(angle),-sin(angle)],[sin(angle),cos(angle)]]),np.array([[0],[-dist]]))#clockwise rotate matrix https://en.wikipedia.org/wiki/Rotation_matrix
+    mx,my=int(obj_pos[0]+player_pos[0]),int(obj_pos[1]+player_pos[1])
+    return mx,my
+mx,my=angle_pos()
+
 pygame.init()
 
 screen_width = width*tile_size + 500
@@ -105,17 +115,18 @@ while running:  # main loop
     pygame.draw.circle(screen, (255, 0, 0), player_pos, tile_size//3)
     
     #draw line of sight
-    in_map_mouse_pos = list(mouse_pos)
-    if mouse_pos[0] > width * tile_size:
-        in_map_mouse_pos[0] = width * tile_size
+    # in_map_mouse_pos = list(mouse_pos)
+    # if mouse_pos[0] > width * tile_size:
+    #    in_map_mouse_pos[0] = width * tile_size
     
-    if mouse_pos[1] > height* tile_size:
-        in_map_mouse_pos[1] = height * tile_size
+    #if mouse_pos[1] > height* tile_size:
+    #   in_map_mouse_pos[1] = height * tile_size
 
-    pygame.draw.line(screen, (255, 0, 0), player_pos, in_map_mouse_pos, 2)
+    pygame.draw.line(screen, (255, 0, 0), player_pos, list([mx,my]), 2)
 
     px, py = player_pos
-    mx, my = in_map_mouse_pos
+    mx,my =angle_pos()
+   # mx, my = in_map_mouse_pos
 
     # vision_points = bresenham(px, py, mx, my)
     # for vp in vis2,000000ion_points:
@@ -126,9 +137,9 @@ while running:  # main loop
     # find all end coordinates of the raycasts
     # increase (to 2 for example) the last number of the range for lower quality (but better performance)
     # bring the first two numbers of the range closer to lower Field Of View (better performance))
-    for theta in range(-120, 120, 1): 
+    for theta in range(-100, 100, 1): 
         
-        theta /= 240 # with theta in [-120, 120] : 137.5 degree FOV (1.2 rad * 2)
+        theta = theta*aov/200 # with theta in [-120, 120] : 137.5 degree FOV (1.2 rad * 2)
         # formula from here https://math.stackexchange.com/questions/1687901/how-to-rotate-a-line-segment-around-one-of-the-end-points
         A = np.array([[cos(theta), -sin(theta)], [sin(theta), cos(theta)]])
         B = np.array([[mx - px], [my - py]])
@@ -173,7 +184,7 @@ while running:  # main loop
             color = (color_hexa, color_hexa, color_hexa)
 
         # a few magic numbers from here, I just tweaked them until things displayed properly
-        wall_height = 20 * (255/(object_distance+1)) # the nearer the object the taller
+        wall_height = 10 * (255/(object_distance+1)) # the nearer the object the taller
 
         pygame.draw.rect(screen, color,
             (i*(screen_width / len(visible_objects)),
