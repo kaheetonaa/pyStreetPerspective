@@ -133,7 +133,6 @@ while running:  # main loop
     #     draw_sight_orb(vp[0], vp[1])
 
     raycast_end_coordinates = []
-
     # find all end coordinates of the raycasts
     # increase (to 2 for example) the last number of the range for lower quality (but better performance)
     # bring the first two numbers of the range closer to lower Field Of View (better performance))
@@ -147,8 +146,7 @@ while running:  # main loop
         xy_matrix = np.dot(A, B) + C
 
         raycast_end_coordinates.append([int(xy_matrix[0][0]), int(xy_matrix[1][0])])
-
-        # vision_points = bresenham(px, py, int(xy_matrix[0][0]), int(xy_matrix[1][0]))
+# vision_points = bresenham(px, py, int(xy_matrix[0][0]), int(xy_matrix[1][0]))
         # for vp in vision_points:
         #     draw_sight_orb(vp[0], vp[1])
 
@@ -172,6 +170,7 @@ while running:  # main loop
         draw_sight_orb(real_ray_end[0], real_ray_end[1]) # draw an orb when a ray hits an object
         distance_to_object = sqrt((real_ray_end[0] - px)**2 + (real_ray_end[1] - py)**2)
         visible_objects.append((distance_to_object, object_is_wall))
+    
 
     # draw all the objects (walls and voids) in the visible_objects list
     # their size is depending on their distance from the player
@@ -196,3 +195,8 @@ while running:  # main loop
 
     pygame.display.flip()
 pygame.quit()
+osm_view=np.array(visible_objects)
+np.savez('osm_view.npz',dist=osm_view[:,0],obst=osm_view[:,1])
+
+print(np.load('osm_view.npz')['dist'])
+

@@ -38,7 +38,7 @@ import sys
 id=sys.argv[1]
 print('id='+id)
 
-with urllib.request.urlopen("https://graph.mapillary.com/"+id+"?access_token=MLY|4463150933761310|5995ca3757fc4f9a9c8f5e96b2efaa03&fields=camera_parameters,camera_type,exif_orientation,computed_geometry,computed_rotation,width,height,computed_compass_angle") as url:
+with urllib.request.urlopen("https://graph.mapillary.com/"+id+"?access_token=MLY|4463150933761310|5995ca3757fc4f9a9c8f5e96b2efaa03&fields=camera_parameters,camera_type,exif_orientation,computed_geometry,computed_rotation,width,height,computed_compass_angle,thumb_1024_url") as url:
     data = json.load(url)
 
 print(data)
@@ -61,7 +61,8 @@ result=solve(f*(1+k1*((xn**2)*(1+1/whratio)**2)+k2*(((xn**2)*(1+1/whratio)**2)**
 for i in result:
     print(type(i))
     if isinstance(i,sympy.core.numbers.Float):
-        angle=math.atan2(i,1)*2 #xn faces the angle, 1 because xn is normalized. multiply by 2for the full angle.
-        angle_deg=angle/math.pi*180
-        print(i,angle,angle_deg)
+        if (i>0):
+            angle=math.atan2(i,1)*2 #xn faces the angle, 1 because xn is normalized. multiply by 2for the full angle.
+            angle_deg=angle/math.pi*180
+            print(i,angle,angle_deg)
 
