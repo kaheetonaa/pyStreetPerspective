@@ -6,8 +6,8 @@ import sys
 
 map = np.load('map_grid.npy') # map string to 2D array of chars
 dist=100
-angle=114.69439480036/180*pi  #compass_angle in radian
-aov=1.361520062270225
+angle=92.329213883192/180*pi  #compass_angle in radian
+aov=1.1687016387068085
 
 print(map)
 

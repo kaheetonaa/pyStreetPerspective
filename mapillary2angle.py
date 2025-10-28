@@ -38,7 +38,7 @@ import sys
 id=sys.argv[1]
 print('id='+id)
 
-with urllib.request.urlopen("https://graph.mapillary.com/"+id+"?access_token=MLY|4463150933761310|5995ca3757fc4f9a9c8f5e96b2efaa03&fields=camera_parameters,camera_type,exif_orientation,computed_geometry,computed_rotation,width,height,computed_compass_angle,thumb_1024_url") as url:
+with urllib.request.urlopen("https://graph.mapillary.com/"+id+"?access_token=MLY|4463150933761310|5995ca3757fc4f9a9c8f5e96b2efaa03&fields=camera_parameters,camera_type,exif_orientation,computed_geometry,computed_rotation,width,height,computed_compass_angle,thumb_1024_url,computed_rotation") as url:
     data = json.load(url)
 
 print(data)
@@ -48,6 +48,7 @@ f=data['camera_parameters'][0]
 k1=data['camera_parameters'][1]
 k2=data['camera_parameters'][2]
 whratio=width/height
+rotation=data['computed_rotation']
 #----------------------------------------
 #xn=x/z
 #yn=y/z
@@ -56,7 +57,7 @@ whratio=width/height
 #u=f*d*xn
 #v=f*d*yn
 xn=Symbol('xn')
-result=solve(f*(1+k1*((xn**2)*(1+1/whratio)**2)+k2*(((xn**2)*(1+1/whratio)**2)**2))*xn-0.5,xn)
+result=solve(f*(1+k1*(xn**2)+k2*(xn**4))*xn-0.5,xn)#solve(f*(1+k1*((xn**2)*(1+1/whratio)**2)+k2*(((xn**2)*(1+1/whratio)**2)**2))*xn-0.5,xn)
 #math.atan2(y, x)
 for i in result:
     print(type(i))
@@ -66,3 +67,19 @@ for i in result:
             angle_deg=angle/math.pi*180
             print(i,angle,angle_deg)
 
+#-------------------------------------------
+#rotation to euler rotation
+rotation+=[math.sqrt(rotation[0]**2+rotation[1]**2+rotation[2]**2)]
+if rotation[3]>0:
+    #define quarternion https://danceswithcode.net/engineeringnotes/quaternions/quaternions.html
+    q0=math.cos(rotation[3]/2)
+    q1=rotation[0]/rotation[3]*math.sin(rotation[3]/2)
+    q2=rotation[1]/rotation[3]*math.sin(rotation[3]/2)
+    q3=rotation[2]/rotation[3]*math.sin(rotation[3]/2)
+    q=[q0,q1,q2,q3]
+    print(rotation)
+    print(q)
+    roll=math.atan2(2*(q0*q1+q2*q3),q0**2-q1**2-q2**2+q3**2)
+    pitch=math.asin(2*(q0*q2-q1*q3))
+    yaw=math.atan2(2*(q0*q3+q1*q2),q0**2+q1**2-q2**2-q3**2)
+    print(roll,pitch,yaw)
