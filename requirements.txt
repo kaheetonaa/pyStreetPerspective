@@ -5,6 +5,5 @@ overpass
 geocube
 pygame
 sympy
-urllib
 json
 math
