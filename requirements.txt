@@ -5,3 +5,5 @@ overpass
 geocube
 pygame
 sympy
+matplotlib
+opencv-python
