@@ -17,7 +17,7 @@ p2=0
 
 print(cx_img,cy_img)
 camera_matrix = np.array([[fx, 0, cx], [0, fy, cy], [0., 0., 1.]], dtype=np.float32)
-camera_matrix_img =np.array([[fx*128/cx, 0, cx_img], [0, fy*128/cy, cy_img], [0., 0., 1.]], dtype=np.float32)   
+camera_matrix_img =np.array([[fx*128/cx, 0, cx_img], [0, fy*128/cx, cy_img], [0., 0., 1.]], dtype=np.float32)   
 dist_coeffs = np.array([k1, k2, p1, p2, k3], dtype=np.float32)
 
 test_grid=[]
@@ -32,9 +32,9 @@ test_grid_scale=test_grid*256
 undistorted = cv2.undistortPoints(test_grid, camera_matrix, dist_coeffs)
 undistorted_arr=np.array([i[0] for i in undistorted])
 
-newcameramtx, roi = cv2.getOptimalNewCameraMatrix(camera_matrix_img, dist_coeffs, (256*cx_img,256*cy_img), 1, (256*cx_img,256*cy_img))
+newcameramtx, roi = cv2.getOptimalNewCameraMatrix(camera_matrix_img, dist_coeffs, (256,int(256*h/w)), 1, (256,int(256*h/w)))
 
-undistorted_image = cv2.undistort(test_image, camera_matrix_img, dist_coeffs)
+undistorted_image = cv2.undistort(test_image, camera_matrix_img, dist_coeffs, None, newcameramtx)
 cv2.imshow('image',test_image)
 cv2.imshow('undistorted_image',undistorted_image)
 cv2.waitKey(0)
