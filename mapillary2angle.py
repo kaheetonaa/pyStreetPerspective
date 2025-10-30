@@ -44,7 +44,7 @@ print('id='+id)
 print('-------------')
 
 context = ssl.create_default_context(cafile=certifi.where())
-with urllib.request.urlopen("https://graph.mapillary.com/"+id+"?access_token=MLY|4463150933761310|5995ca3757fc4f9a9c8f5e96b2efaa03&fields=camera_parameters,camera_type,exif_orientation,computed_geometry,computed_rotation,width,height,computed_compass_angle,thumb_1024_url,computed_rotation",context=context) as url:
+with urllib.request.urlopen("https://graph.mapillary.com/"+id+"?access_token=MLY|4463150933761310|5995ca3757fc4f9a9c8f5e96b2efaa03&fields=camera_parameters,camera_type,exif_orientation,computed_geometry,computed_rotation,width,height,computed_compass_angle,thumb_1024_url,thumb_256_url,computed_rotation",context=context) as url:
     data = json.load(url)
 
 
