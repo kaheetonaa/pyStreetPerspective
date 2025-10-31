@@ -1,16 +1,16 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-w=4000
-h=3008
-fx=0.35870812538863
-fy=0.35870812538863
+w=3840
+h=2160
+fx=0.27501776145519
+fy=0.27501776145519
 cx=0.5
 cy=0.5*h/w
 cx_img=int(256*cx)
 cy_img=int(256*cy)
-k1=-0.13003525310221
-k2=0.018042701127664
+k1=-0.064926986043171
+k2=0.0029608425514045
 k3=0
 p1=0
 p2=0
@@ -21,13 +21,12 @@ camera_matrix_img =np.array([[fx*128/cx, 0, cx_img], [0, fy*128/cx, cy_img], [0.
 dist_coeffs = np.array([k1, k2, p1, p2, k3], dtype=np.float32)
 
 test_grid=[]
-test_image=cv2.imread("test.jpeg")
+test_image=cv2.imread("958023398693452.jpg")
 for i in range(20):
     for j in range(20):
         test_grid+=[[i*cx/10,j*cy/10]]
 
 test_grid=np.array(test_grid)
-test_grid_scale=test_grid*256
 
 undistorted = cv2.undistortPoints(test_grid, camera_matrix, dist_coeffs)
 undistorted_arr=np.array([i[0] for i in undistorted])
@@ -38,7 +37,7 @@ undistorted_image = cv2.undistort(test_image, camera_matrix_img, dist_coeffs, No
 cv2.imshow('image',test_image)
 cv2.imshow('undistorted_image',undistorted_image)
 cv2.waitKey(0)
-plt.plot(test_grid_scale[:,0],test_grid_scale[:,1],'o')
+plt.plot(test_grid[:,0],test_grid[:,1],'o')
 plt.show()
 
 plt.plot(undistorted_arr[:,0],undistorted_arr[:,1],'o')
